@@ -1162,6 +1162,1184 @@ Tukey's Range Test
 What kind of test would you use to see if men and women identify differently as "Republican", "Democrat", or "Independent"?
 Chi Square
 
+\section{Pandas in Python}
+Pandas is a Python module for working with tabular data (i.e., data in a table with rows and columns). Tabular data has a lot of the same functionality as SQL or Excel, but Pandas adds the power of Python.
+
+In order to get access to the Pandas module, we'll need to install the module and then import it into a Python file. 
+
+The pandas module is usually imported at the top of a Python file under the alias pd.
+
+import pandas as pd
+
+A DataFrame is an object that stores data as rows and columns. You can think of a DataFrame as a spreadsheet or as a SQL table. You can manually create a DataFrame or fill it with data from a CSV, an Excel spreadsheet, or a SQL query.
+
+DataFrames have rows and columns. Each column has a name, which is a string. Each row has an index, which is an integer. DataFrames can contain many different data types: strings, ints, floats, tuples, etc.
+
+You can pass in a dictionary to pd.DataFrame(). Each key is a column name and each value is a list of column values. The columns must all be the same length or you will get an error. Here’s an example:
+
+df1 = pd.DataFrame({
+    'name': ['John Smith', 'Jane Doe', 'Joe Schmo'],
+    'address': ['123 Main St.', '456 Maple Ave.', '789 Broadway'],
+    'age': [34, 28, 51]
+})
+
+This command creates a DataFrame called df1 that looks like this:
+
+
+You can also add data using lists.
+
+For example, you can pass in a list of lists, where each one represents a row of data. Use the keyword argument columns to pass a list of column names.
+
+df2 = pd.DataFrame([
+    ['John Smith', '123 Main St.', 34],
+    ['Jane Doe', '456 Maple Ave.', 28],
+    ['Joe Schmo', '789 Broadway', 51]
+    ],
+    columns=['name', 'address', 'age'])
+
+This command produces a DataFrame df2 that looks like this:
+
+Comma Separated Variables (CSV)
+
+We now know how to create our own DataFrame. However, most of the time, we'll be working with datasets that already exist. One of the most common formats for big datasets is the CSV.
+
+CSV (comma separated values) is a text-only spreadsheet format. You can find CSVs in lots of places:
+
+    Online datasets (here's an example from data.gov)
+    Export from Excel or Google Sheets
+    Export from SQL
+
+The first row of a CSV contains column headings. All subsequent rows contain values. Each column heading and each variable is separated by a comma:
+
+column1,column2,column3
+value1,value2,value3
+
+That example CSV represents the following table:
+
+Loading and Saving CSVs
+
+When you have data in a CSV, you can load it into a DataFrame in Pandas using .read_csv():
+
+pd.read_csv('my-csv-file.csv')
+
+In the example above, the .read_csv() method is called. The CSV file called my-csv-file is passed in as an argument.
+
+We can also save data to a CSV, using .to_csv().
+
+df.to_csv('new-csv-file.csv')
+
+In the example above, the .to_csv() method is called on df (which represents a DataFrame object). The name of the CSV file is passed in as an argument (new-csv-file.csv). By default, this method will save the CSV file in your current directory.
+
+
+Inspect a DataFrame
+
+When we load a new DataFrame from a CSV, we want to know what it looks like.
+
+If it's a small DataFrame, you can display it by typing print(df).
+
+If it's a larger DataFrame, it's helpful to be able to inspect a few items without having to look at the entire DataFrame.
+
+The method .head() gives the first 5 rows of a DataFrame. If you want to see more rows, you can pass in the positional argument n. For example, df.head(10) would show the first 10 rows.
+
+The method df.info() gives some statistics for each column.
+
+
+Now we know how to create and load data. Let's select parts of those datasets that are interesting or important to our analyses.
+
+Suppose you have the DataFrame called customers, which contains the ages of your customers:
+name 	age
+Rebecca Erikson 	35
+Thomas Roberson 	28
+Diane Ochoa 	42
+... 	...
+
+Perhaps you want to take the average or plot a histogram of the ages. In order to do either of these tasks, you'd need to select the column.
+
+There are two possible syntaxes for selecting all values from a column:
+
+    Select the column as if you were selecting a value from a dictionary using a key. In our example, we would type customers['age'] to select the ages.
+    If the name of a column follows all of the rules for a variable name (doesn't start with a number, doesn't contain spaces or special characters, etc.), then you can select it using the following notation: df.MySecondColumn. In our example, we would type customers.age.
+
+When we select a single column, the result is called a Series.
+
+E.g.
+
+import pandas as pd
+
+df = pd.DataFrame([
+  ['January', 100, 100, 23, 100],
+  ['February', 51, 45, 145, 45],
+  ['March', 81, 96, 65, 96],
+  ['April', 80, 80, 54, 180],
+  ['May', 51, 54, 54, 154],
+  ['June', 112, 109, 79, 129]],
+  columns=['month', 'clinic_east',
+           'clinic_north', 'clinic_south',
+           'clinic_west']
+)
+
+clinic_north = df.clinic_north
+#clinic_north = df['clinic_north']
+
+print(type(clinic_north))
+print(type(df))
+
+
+Selecting Multiple Columns
+
+When you have a larger DataFrame, you might want to select just a few columns.
+
+For instance, let's return to a DataFrame of orders from ShoeFly.com:
+id 	first_name 	last_name 	email 	shoe_type 	shoe_material 	shoe_color
+54791 	Rebecca 	Lindsay 	RebeccaLindsay57@hotmail.com 	clogs 	faux-leather 	black
+53450 	Emily 	Joyce 	EmilyJoyce25@gmail.com 	ballet flats 	faux-leather 	navy
+91987 	Joyce 	Waller 	Joyce.Waller@gmail.com 	sandals 	fabric 	black
+14437 	Justin 	Erickson 	Justin.Erickson@outlook.com 	clogs 	faux-leather 	red
+
+We might just be interested in the customer's last_name and email. We want a DataFrame like this:
+last_name 	email
+Lindsay 	RebeccaLindsay57@hotmail.com
+Joyce 	EmilyJoyce25@gmail.com
+Waller 	Joyce.Waller@gmail.com
+Erickson 	Justin.Erickson@outlook.com
+
+To select two or more columns from a DataFrame, we use a list of the column names. To create the DataFrame shown above, we would use:
+
+new_df = orders[['last_name', 'email']]
+
+*Note: *Make sure that you have a double set of brackets ([[]]), or this command won't work!
+
+E.g.
+import pandas as pd
+
+df = pd.DataFrame([
+  ['January', 100, 100, 23, 100],
+  ['February', 51, 45, 145, 45],
+  ['March', 81, 96, 65, 96],
+  ['April', 80, 80, 54, 180],
+  ['May', 51, 54, 54, 154],
+  ['June', 112, 109, 79, 129]],
+  columns=['month', 'clinic_east',
+           'clinic_north', 'clinic_south',
+           'clinic_west']
+)
+
+clinic_north_south = df[['clinic_north', 'clinic_south']]
+
+print(type(clinic_north_south))
+
+Select Rows
+
+Let's revisit our orders from ShoeFly.com:
+id 	first_name 	last_name 	email 	shoe_type 	shoe_material 	shoe_color
+54791 	Rebecca 	Lindsay 	RebeccaLindsay57@hotmail.com 	clogs 	faux-leather 	black
+53450 	Emily 	James 	EmilyJames25@gmail.com 	ballet flats 	faux-leather 	navy
+91987 	Joyce 	Waller 	Joyce.Waller@gmail.com 	sandals 	fabric 	black
+14437 	Justin 	Erickson 	Justin.Erickson@outlook.com 	clogs 	faux-leather 	red
+... 						
+
+Maybe our Customer Service department has just received a message from Joyce Waller, so we want to know exactly what she ordered. We want to select this single row of data.
+
+DataFrames are zero-indexed, meaning that we start with the 0th row and count up from there. Joyce Waller's order is the 2nd row.
+
+We select it using the following command:
+
+orders.iloc[2]
+
+When we select a single row, the result is a Series (just like when we select a single column).
+
+Selecting Multiple Rows
+
+You can also select multiple rows from a DataFrame.
+
+Here are a few more rows from ShoeFly.com's orders DataFrame:
+id 	first_name 	last_name 	email 	shoe_type 	shoe_material 	shoe_color
+54791 	Rebecca 	Lindsay 	RebeccaLindsay57@hotmail.com 	clogs 	faux-leather 	black
+53450 	Emily 	Joyce 	EmilyJoyce25@gmail.com 	ballet flats 	faux-leather 	navy
+91987 	Joyce 	Waller 	Joyce.Waller@gmail.com 	sandals 	fabric 	black
+14437 	Justin 	Erickson 	Justin.Erickson@outlook.com 	clogs 	faux-leather 	red
+79357 	Andrew 	Banks 	AB4318@gmail.com 	boots 	leather 	brown
+52386 	Julie 	Marsh 	JulieMarsh59@gmail.com 	sandals 	fabric 	black
+20487 	Thomas 	Jensen 	TJ5470@gmail.com 	clogs 	fabric 	navy
+76971 	Janice 	Hicks 	Janice.Hicks@gmail.com 	clogs 	faux-leather 	navy
+21586 	Gabriel 	Porter 	GabrielPorter24@gmail.com 	clogs 	leather 	brown
+
+Here are some different ways of selecting multiple rows:
+
+    orders.iloc[3:7] would select all rows starting at the 3rd row and up to but not including the 7th row (i.e., the 3rd row, 4th row, 5th row, and 6th row)
+
+
+id 	first_name 	last_name 	email 	shoe_type 	shoe_material 	shoe_color
+14437 	Justin 	Erickson 	Justin.Erickson@outlook.com 	clogs 	faux-leather 	red
+79357 	Andrew 	Banks 	AB4318@gmail.com 	boots 	leather 	brown
+52386 	Julie 	Marsh 	JulieMarsh59@gmail.com 	sandals 	fabric 	black
+20487 	Thomas 	Jensen 	TJ5470@gmail.com 	clogs 	fabric 	navy
+
+    orders.iloc[:4] would select all rows up to, but not including the 4th row (i.e., the 0th, 1st, 2nd, and 3rd rows)
+
+
+id 	first_name 	last_name 	email 	shoe_type 	shoe_material 	shoe_color
+54791 	Rebecca 	Lindsay 	RebeccaLindsay57@hotmail.com 	clogs 	faux-leather 	black
+53450 	Emily 	Joyce 	EmilyJoyce25@gmail.com 	ballet flats 	faux-leather 	navy
+91987 	Joyce 	Waller 	Joyce.Waller@gmail.com 	sandals 	fabric 	black
+14437 	Justin 	Erickson 	Justin.Erickson@outlook.com 	clogs 	faux-leather 	red
+
+    orders.iloc[-3:] would select the rows starting at the 3rd to last row and up to and including the final row
+
+
+id 	first_name 	last_name 	email 	shoe_type 	shoe_material 	shoe_color
+20487 	Thomas 	Jensen 	TJ5470@gmail.com 	clogs 	fabric 	navy
+76971 	Janice 	Hicks 	Janice.Hicks@gmail.com 	clogs 	faux-leather 	navy
+21586 	Gabriel 	Porter 	GabrielPorter24@gmail.com 	clogs leather brown
+
+Select Rows with Logic I
+
+You can select a subset of a DataFrame by using logical statements:
+
+df[df.MyColumnName == desired_column_value]
+
+We have a large DataFrame with information about our customers. A few of the many rows look like this:
+name 	address 	phone 	age
+Martha Jones 	123 Main St. 	234-567-8910 	28
+Rose Tyler 	456 Maple Ave. 	212-867-5309 	22
+Donna Noble 	789 Broadway 	949-123-4567 	35
+Amy Pond 	98 West End Ave. 	646-555-1234 	29
+Clara Oswald 	54 Columbus Ave. 	714-225-1957 	31
+... 	... 	... 	...
+
+Suppose we want to select all rows where the customer's age is 30. We would use:
+
+df[df.age == 30]
+
+In Python, == is how we test if a value is exactly equal to another value.
+
+We can use other logical statements, such as:
+
+    Greater Than, > — Here, we select all rows where the customer's age is greater than 30:
+
+    df[df.age > 30]
+
+    Less Than, < — Here, we select all rows where the customer's age is less than 30:
+
+    df[df.age < 30]
+
+    Not Equal, != — This snippet selects all rows where the customer's name is not Clara Oswald:
+
+    df[df.name != 'Clara Oswald']
+
+
+Select Rows with Logic II
+
+You can also combine multiple logical statements, as long as each statement is in parentheses.
+
+For instance, suppose we wanted to select all rows where the customer's age was under 30 or the customer's name was "Martha Jones":
+name 	address 	phone 	age
+Martha Jones 	123 Main St. 	234-567-8910 	28
+Rose Tyler 	456 Maple Ave. 	212-867-5309 	22
+Donna Noble 	789 Broadway 	949-123-4567 	35
+Amy Pond 	98 West End Ave. 	646-555-1234 	29
+Clara Oswald 	54 Columbus Ave. 	714-225-1957 	31
+... 			
+
+We could use the following code:
+
+df[(df.age < 30) |
+   (df.name == 'Martha Jones')]
+
+In Python, | means "or" and & means "and".
+
+
+Select Rows with Logic III
+
+Suppose we want to select the rows where the customer's name is either "Martha Jones", "Rose Tyler" or "Amy Pond".
+name 	address 	phone 	age
+Martha Jones 	123 Main St. 	234-567-8910 	28
+Rose Tyler 	456 Maple Ave. 	212-867-5309 	22
+Donna Noble 	789 Broadway 	949-123-4567 	35
+Amy Pond 	98 West End Ave. 	646-555-1234 	29
+Clara Oswald 	54 Columbus Ave. 	714-225-1957 	31
+... 	... 	... 	...
+
+We could use the isin command to check that df.name is one of a list of values:
+
+df[df.name.isin(['Martha Jones',
+     'Rose Tyler',
+     'Amy Pond'])]
+
+Setting indices
+
+When we select a subset of a DataFrame using logic, we end up with non-consecutive indices. This is inelegant and makes it hard to use .iloc().
+
+We can fix this using the method .reset_index(). For example, here is a DataFrame called df with non-consecutive indices:
+	First Name 	Last Name
+0 	John 	Smith
+4 	Jane 	Doe
+7 	Joe 	Schmo
+
+If we use the command df.reset_index(), we get a new DataFrame with a new set of indices:
+	index 	First Name 	Last Name
+0 	0 	John 	Smith
+1 	4 	Jane 	Doe
+2 	7 	Joe 	Schmo
+
+Note that the old indices have been moved into a new column called 'index'. Unless you need those values for something special, it's probably better to use the keyword drop=True so that you don't end up with that extra column. If we run the command df.reset_index(drop=True), we get a new DataFrame that looks like this:
+	First Name 	Last Name
+0 	John 	Smith
+1 	Jane 	Doe
+2 	Joe 	Schmo
+
+Using .reset_index() will return a new DataFrame, but we usually just want to modify our existing DataFrame. If we use the keyword inplace=True we can just modify our existing DataFrame.
+
+
+Review
+
+You've completed the lesson! You've just learned the basics of working with a single table in Pandas, including:
+
+    Create a table from scratch
+    Loading data from another file
+    Selecting certain rows or columns of a table
+
+Let's practice what you've learned.
+
+
+\subsection{Modifying Dataframes}
+Modifying DataFrames
+
+In the previous lesson, you learned what a DataFrame is and how to select subsets of data from one.
+
+In this lesson, you'll learn how to modify an existing DataFrame. Some of the skills you'll learn include:
+
+    Adding columns to a DataFrame
+    Using lambda functions to calculate complex quantities
+    Renaming columns
+
+Adding a Column I
+
+Sometimes, we want to add a column to an existing DataFrame. We might want to add new information or perform a calculation based on the data that we already have.
+
+One way that we can add a new column is by giving a list of the same length as the existing DataFrame.
+
+Suppose we own a hardware store called The Handy Woman and have a DataFrame containing inventory information:
+Product ID 	Product Description 	Cost to Manufacture 	Price
+1 	3 inch screw 	0.50 	0.75
+2 	2 inch nail 	0.10 	0.25
+3 	hammer 	3.00 	5.50
+4 	screwdriver 	2.50 	3.00
+
+It looks like the actual quantity of each product in our warehouse is missing!
+
+Let's use the following code to add that information to our DataFrame.
+
+df['Quantity'] = [100, 150, 50, 35]
+
+Our new DataFrame looks like this:
+Product ID 	Product Description 	Cost to Manufacture 	Price 	Quantity
+1 	3 inch screw 	0.50 	0.75 	100
+2 	2 inch nail 	0.10 	0.25 	150
+3 	hammer 	3.00 	5.50 	50
+4 	screwdriver 	2.50 	3.00 	35
+
+
+Adding a Column II
+
+We can also add a new column that is the same for all rows in the DataFrame. Let's return to our inventory example:
+Product ID 	Product Description 	Cost to Manufacture 	Price
+1 	3 inch screw 	0.50 	0.75
+2 	2 inch nail 	0.10 	0.25
+3 	hammer 	3.00 	5.50
+4 	screwdriver 	2.50 	3.00
+
+Suppose we know that all of our products are currently in-stock. We can add a column that says this:
+
+df['In Stock?'] = True
+
+Now all of the rows have a column called In Stock? with value True.
+Product ID 	Product Description 	Cost to Manufacture 	Price 	In Stock?
+1 	3 inch screw 	0.50 	0.75 	True
+2 	2 inch nail 	0.10 	0.25 	True
+3 	hammer 	3.00 	5.50 	True
+4 	screwdriver 	2.50 	3.00 	True
+
+
+
+Adding a Column III
+
+Finally, you can add a new column by performing a function on the existing columns.
+
+Maybe we want to add a column to our inventory table with the amount of sales tax that we need to charge for each item. The following code multiplies each Price by 0.075, the sales tax for our state:
+
+df['Sales Tax'] = df.Price * 0.075
+
+Now our table has a column called Sales Tax:
+Product ID 	Product Description 	Cost to Manufacture 	Price 	Sales Tax
+1 	3 inch screw 	0.50 	0.75 	0.06
+2 	2 inch nail 	0.10 	0.25 	0.02
+3 	hammer 	3.00 	5.50 	0.41
+4 	screwdriver 	2.50 	3.00 	0.22
+
+
+Performing Column Operations
+
+In the previous exercise, we learned how to add columns to a DataFrame.
+
+Often, the column that we want to add is related to existing columns, but requires a calculation more complex than multiplication or addition.
+
+For example, imagine that we have the following table of customers.
+Name 	Email
+JOHN SMITH 	john.smith@gmail.com
+Jane Doe 	jdoe@yahoo.com
+joe schmo 	joeschmo@hotmail.com
+
+It’s a little annoying that the capitalization is different for each row. Perhaps we’d like to make it more consistent by making all of the letters uppercase.
+
+We can use the apply function to apply a function to every value in a particular column. For example, this code overwrites the existing 'Name' columns by applying the function upper to every row in 'Name'.
+
+from string import upper
+
+df['Name'] = df.Name.apply(upper)
+
+The result:
+Name 	Email
+JOHN SMITH 	john.smith@gmail.com
+JANE DOE 	jdoe@yahoo.com
+JOE SCHMO 	joeschmo@hotmail.com
+
+
+Reviewing Lambda Function
+
+A lambda function is a way of defining a function in a single line of code. Usually, we would assign them to a variable.
+
+For example, the following lambda function multiplies a number by 2 and then adds 3:
+
+mylambda = lambda x: (x * 2) + 3
+print(mylambda(5))
+
+The output:
+
+> 13
+
+Lambda functions work with all types of variables, not just integers! Here is an example that takes in a string, assigns it to the temporary variable x, and then converts it into lowercase:
+
+stringlambda = lambda x: x.lower()
+print(stringlambda("Oh Hi Mark!"))
+
+The output:
+
+> "oh hi mark!"
+
+Learn more about lambda functions in this article!
+
+
+Reviewing Lambda Function: If Statements
+
+We can make our lambdas more complex by using a modified form of an if statement.
+
+Suppose we want to pay workers time-and-a-half for overtime (any work above 40 hours per week). The following function will convert the number of hours into time-and-a-half hours using an if statement:
+
+def myfunction(x):
+    if x > 40:
+        return 40 + (x - 40) * 1.50
+    else:
+        return x
+
+Below is a lambda function that does the same thing:
+
+myfunction = lambda x: 40 + (x - 40) * 1.50 \
+    if x > 40 else x
+
+In general, the syntax for an if function in a lambda function is:
+
+lambda x: [OUTCOME IF TRUE] \
+    if [CONDITIONAL] \
+    else [OUTCOME IF FALSE]
+
+Applying a Lambda to a Column
+
+In Pandas, we often use lambda functions to perform complex operations on columns. For example, suppose that we want to create a column containing the email provider for each email address in the following table:
+Name 	Email
+JOHN SMITH 	john.smith@gmail.com
+Jane Doe 	jdoe@yahoo.com
+joe schmo 	joeschmo@hotmail.com
+
+We could use the following code with a lambda function:
+
+df['Email Provider'] = df.Email.apply(
+    lambda x: x.split('@')[-1]
+    )
+
+The result would be:
+Name 	Email 	Email Provider
+JOHN SMITH 	john.smith@gmail.com 	gmail.com
+Jane Doe 	jdoe@yahoo.com 	yahoo.com
+joe schmo 	joeschmo@hotmail.com 	hotmail.com
+
+
+Applying a Lambda to a Row
+
+We can also operate on multiple columns at once. If we use apply without specifying a single column and add the argument axis=1, the input to our lambda function will be an entire row, not a column. To access particular values of the row, we use the syntax row.column_name or row[‘column_name’].
+
+Suppose we have a table representing a grocery list:
+Item 	Price 	Is taxed?
+Apple 	1.00 	No
+Milk 	4.20 	No
+Paper Towels 	5.00 	Yes
+Light Bulbs 	3.75 	Yes
+
+If we want to add in the price with tax for each line, we’ll need to look at two columns: Price and Is taxed?.
+
+If Is taxed? is Yes, then we’ll want to multiply Price by 1.075 (for 7.5% sales tax).
+
+If Is taxed? is No, we’ll just have Price without multiplying it.
+
+We can create this column using a lambda function and the keyword axis=1:
+
+df['Price with Tax'] = df.apply(lambda row:
+     row['Price'] * 1.075
+     if row['Is taxed?'] == 'Yes'
+     else row['Price'],
+     axis=1
+)
+
+Renaming Columns
+
+When we get our data from other sources, we often want to change the column names. For example, we might want all of the column names to follow variable name rules, so that we can use df.column_name (which tab-completes) rather than df['column_name'] (which takes up extra space).
+
+You can change all of the column names at once by setting the .columns property to a different list. This is great when you need to change all of the column names at once, but be careful! You can easily mislabel columns if you get the ordering wrong. Here's an example:
+
+df = pd.DataFrame({
+    'name': ['John', 'Jane', 'Sue', 'Fred'],
+    'age': [23, 29, 21, 18]
+})
+df.columns = ['First Name', 'Age']
+
+This command edits the existing DataFrame df.
+
+
+Renaming Columns II
+
+You also can rename individual columns by using the .rename method. Pass a dictionary like the one below to the columns keyword argument:
+
+{'old_column_name1': 'new_column_name1', 'old_column_name2': 'new_column_name2'}
+
+Here's an example:
+
+df = pd.DataFrame({
+    'name': ['John', 'Jane', 'Sue', 'Fred'],
+    'age': [23, 29, 21, 18]
+})
+df.rename(columns={
+    'name': 'First Name',
+    'age': 'Age'},
+    inplace=True)
+
+The code above will rename name to First Name and age to Age.
+
+Using rename with only the columns keyword will create a new DataFrame, leaving your original DataFrame unchanged. That's why we also passed in the keyword argument inplace=True. Using inplace=True lets us edit the original DataFrame.
+
+There are several reasons why .rename is preferable to .columns:
+
+    You can rename just one column
+    You can be specific about which column names are getting changed (with .column you can accidentally switch column names if you're not careful)
+
+*Note: *If you misspell one of the original column names, this command won't fail. It just won't change anything.
+
+Review
+
+Great job! In this lesson, you learned how to modify an existing DataFrame. Some of the skills you've learned include:
+
+    Adding columns to a DataFrame
+    Using lambda functions to calculate complex quantities
+    Renaming columns
+
+Let's practice what you just learned!
+
+
+example project
+
+import pandas as pd
+
+inventory = pd.read_csv('inventory.csv')
+
+print(inventory.head(10))
+
+staten_island = inventory.head(10)
+
+product_request = staten_island['product_description']
+seed_request = staten_island[staten_island.product_type == 'seeds']
+
+print(product_request)
+print(seed_request)
+
+inventory["in_stock"] = inventory.quantity > 0
+inventory["total_value"] = inventory.price * inventory.quantity
+combine_lambda = lambda row: '{} - {}'.format(row.product_type, row.product_description)
+
+inventory['full_description'] = inventory.apply(combine_lambda, axis=1)
+
+print(inventory.head())
+
+\subsection{Aggregates in Pandas}
+Introduction
+
+This lesson you will learn about aggregates in Pandas. An aggregate statistic is a way of creating a single number that describes a group of numbers. Common aggregate statistics incluse mean, median, or standard deviation.
+
+You will also learn how to rearrange a DataFrame into a pivot table, which is a great way to compare data across two dimensions.
+
+
+
+Calculating Column Statistics
+
+In the previous lesson, you learned how to perform operations on each value in a column using apply.
+
+In this exercise, you will learn how to combine all of the values from a column for a single calculation.
+
+Some examples of this type of calculation include:
+
+    The DataFrame customers contains the names and ages of all of your customers. You want to find the median age:
+
+    print(customers.age)
+    >> [23, 25, 31, 35, 35, 46, 62]
+    print(customers.age.median())
+    >> 35
+
+    The DataFrame shipments contains address information for all shipments that you've sent out in the past year. You want to know how many different states you have shipped to (and how many shipments went to the same state).
+
+    print(shipments.state)
+    >> ['CA', 'CA', 'CA', 'CA', 'NY', 'NY', 'NJ', 'NJ', 'NJ', 'NJ', 'NJ', 'NJ', 'NJ']
+    print(shipments.state.nunique())
+    >> 3
+
+    The DataFrame inventory contains a list of types of t-shirts that your company makes. You want a list of the colors that your shirts come in.
+
+    print(inventory.color)
+    >> ['blue', 'blue', 'blue', 'blue', 'blue', 'green', 'green', 'orange', 'orange', 'orange']
+    print(inventory.color.unique())
+    >> ['blue', 'green', 'orange']
+
+The general syntax for these calculations is:
+
+df.column_name.command()
+
+The following table summarizes some common commands:
+Command 	Description
+mean 	Average of all values in column
+std 	Standard deviation
+median 	Median
+max 	Maximum value in column
+min 	Minimum value in column
+count 	Number of values in column
+nunique 	Number of unique values in column
+unique 	List of unique values in column
+
+
+
+Calculating Aggregate Functions I
+
+When we have a bunch of data, we often want to calculate aggregate statistics (mean, standard deviation, median, percentiles, etc.) over certain subsets of the data.
+
+Suppose we have a grade book with columns student, assignment_name, and grade. The first few lines look like this:
+student 	assignment_name 	grade
+Amy 	Assignment 1 	75
+Amy 	Assignment 2 	35
+Bob 	Assignment 1 	99
+Bob 	Assignment 2 	35
+... 		
+	
+
+We want to get an average grade for each student across all assignments. We could do some sort of loop, but Pandas gives us a much easier option: the method .groupby.
+
+For this example, we'd use the following command:
+
+grades = df.groupby('student').grade.mean()
+
+The output might look something like this:
+student 	grade
+Amy 	80
+Bob 	90
+Chris 	75
+... 	
+	
+
+In general, we use the following syntax to calculate aggregates:
+
+df.groupby('column1').column2.measurement()
+
+where:
+
+    column1 is the column that we want to group by ('student' in our example)
+    column2 is the column that we want to perform a measurement on (grade in our example)
+    measurement is the measurement function we want to apply (mean in our example)
+
+
+Calculating Aggregate Functions II
+
+After using groupby, we often need to clean our resulting data.
+
+As we saw in the previous exercise, the groupby function creates a new Series, not a DataFrame. For our ShoeFly.com example, the indices of the Series were different values of shoe_type, and the name property was price.
+
+Usually, we'd prefer that those indices were actually a column. In order to get that, we can use reset_index(). This will transform our Series into a DataFrame and move the indices into their own column.
+
+Generally, you'll always see a groupby statement followed by reset_index:
+
+df.groupby('column1').column2.measurement()
+    .reset_index()
+
+When we use groupby, we often want to rename the column we get as a result. For example, suppose we have a DataFrame teas containing data on types of tea:
+id 	tea 	category 	caffeine 	price
+0 	earl grey 	black 	38 	3
+1 	english breakfast 	black 	41 	3
+2 	irish breakfast 	black 	37 	2.5
+3 	jasmine 	green 	23 	4.5
+4 	matcha 	green 	48 	5
+5 	camomile 	herbal 	0 	3
+... 				
+
+We want to find the number of each category of tea we sell. We can use:
+
+teas_counts = teas.groupby('category').id.count().reset_index()
+
+This yields a DataFrame that looks like:
+	category 	id
+0 	black 	3
+1 	green 	4
+2 	herbal 	8
+3 	white 	2
+... 		
+	
+
+The new column contains the counts of each category of tea sold. We have 3 black teas, 4 green teas, and so on. However, this column is called id because we used the id column of teas to calculate the counts. We actually want to call this column counts. Remember that we can rename columns:
+
+teas_counts = teas_counts.rename(columns={"id": "counts"})
+
+Our DataFrame now looks like:
+	category 	counts
+0 	black 	3
+1 	green 	4
+2 	herbal 	8
+3 	white 	2
+... 		
+		
+		
+Calculating Aggregate Functions III
+
+Sometimes, the operation that you want to perform is more complicated than mean or count. In those cases, you can use the apply method and lambda functions, just like we did for individual column operations. Note that the input to our lambda function will always be a list of values.
+
+A great example of this is calculating percentiles. Suppose we have a DataFrame of employee information called df that has the following columns:
+
+    id: the employee's id number
+    name: the employee's name
+    wage: the employee's hourly wage
+    category: the type of work that the employee does
+
+Our data might look something like this:
+id 	name 	wage 	category
+10131 	Sarah Carney 	39 	product
+14189 	Heather Carey 	17 	design
+15004 	Gary Mercado 	33 	marketing
+11204 	Cora Copaz 	27 	design
+... 			
+
+If we want to calculate the 75th percentile (i.e., the point at which 75% of employees have a lower wage and 25% have a higher wage) for each category, we can use the following combination of apply and a lambda function:
+
+# np.percentile can calculate any percentile over an array of values
+high_earners = df.groupby('category').wage
+    .apply(lambda x: np.percentile(x, 75))
+    .reset_index()
+
+The output, high_earners might look like this:
+	category 	wage
+0 	design 	23
+1 	marketing 	35
+2 	product 	48
+... 		
+
+Calculating Aggregate Functions IV
+
+Sometimes, we want to group by more than one column. We can easily do this by passing a list of column names into the groupby method.
+
+Imagine that we run a chain of stores and have data about the number of sales at different locations on different days:
+Location 	Date 	Day of Week 	Total Sales
+West Village 	February 1 	W 	400
+West Village 	February 2 	Th 	450
+Chelsea 	February 1 	W 	375
+Chelsea 	February 2 	Th 	390
+		
+
+We suspect that sales are different at different locations on different days of the week. In order to test this hypothesis, we could calculate the average sales for each store on each day of the week across multiple months. The code would look like this:
+
+df.groupby(['Location', 'Day of Week'])['Total Sales'].mean().reset_index()
+
+The results might look something like this:
+Location 	Day of Week 	Total Sales
+Chelsea 	M 	402.50
+Chelsea 	Tu 	422.75
+Chelsea 	W 	452.00
+... 		
+West Village 	M 	390
+West Village 	Tu 	400
+... 		
+		
+		
+
+Pivot Tables
+
+When we perform a groupby across multiple columns, we often want to change how our data is stored. For instance, recall the example where we are running a chain of stores and have data about the number of sales at different locations on different days:
+Location 	Date 	Day of Week 	Total Sales
+West Village 	February 1 	W 	400
+West Village 	February 2 	Th 	450
+Chelsea 	February 1 	W 	375
+Chelsea 	February 2 	Th 	390
+		We suspected that there might be different sales on different days of the week at different stores, so we performed a groupby across two different columns (Location and Day of Week). This gave us results that looked like this: 			
+Location 	Day of Week 	Total Sales
+Chelsea 	M 	300
+Chelsea 	Tu 	310
+Chelsea 	W 	320
+Chelsea 	Th 	290
+... 		
+West Village 	Th 	400
+West Village 	F 	390
+West Village 	Sa 	250
+... 		
+		In order to test our hypothesis, it would be more useful if the table was formatted like this: 		
+Location 	M 	Tu 	W 	Th 	F 	Sa 	Su
+Chelsea 	400 	390 	250 	275 	300 	150 	175
+West Village 	300 	310 	350 	400 	390 	250 	200
+... 							
+
+Reorganizing a table in this way is called pivoting. The new table is called a pivot table.
+
+In Pandas, the command for pivot is:
+
+df.pivot(columns='ColumnToPivot',
+         index='ColumnToBeRows',
+         values='ColumnToBeValues')
+
+For our specific example, we would write the command like this:
+
+# First use the groupby statement:
+unpivoted = df.groupby(['Location', 'Day of Week'])['Total Sales'].mean().reset_index()
+# Now pivot the table
+pivoted = unpivoted.pivot(
+    columns='Day of Week',
+    index='Location',
+    values='Total Sales')
+
+Just like with groupby, the output of a pivot command is a new DataFrame, but the indexing tends to be "weird", so we usually follow up with .reset_index().
+
+Review
+
+This lesson introduced you to aggregates in Pandas. You learned:
+
+    How to perform aggregate statistics over individual rows with the same value using groupby.
+    How to rearrange a DataFrame into a pivot table, a great way to compare data across two dimensions.
+
+import codecademylib
+import pandas as pd
+
+user_visits = pd.read_csv('page_visits.csv')
+
+print(user_visits.head())
+
+click_source = user_visits.groupby(["utm_source"]).id.count().reset_index()
+
+print(click_source)
+
+click_source_by_month = user_visits.groupby(["utm_source", "month"]).id.count().reset_index()
+
+print(click_source_by_month)
+
+click_source_by_month_pivot = click_source_by_month.pivot(
+  columns="month",
+  index="utm_source",
+  values="id").reset_index()
+
+print(click_source_by_month_pivot)
+
+\subsection{Multiple Dataframes}
+Introduction: Multiple DataFrames
+
+In order to efficiently store data, we often spread related information across multiple tables.
+
+For instance, imagine that we own an e-commerce business and we want to track the products that have been ordered from our website.
+
+We could have one table with all of the following information:
+
+    order_id
+    customer_id
+    customer_name
+    customer_address
+    customer_phone_number
+    product_id
+    product_description
+    product_price
+    quantity
+    timestamp
+
+However, a lot of this information would be repeated. If the same customer makes multiple orders, that customer’s name, address, and phone number will be reported multiple times. If the same product is ordered by multiple customers, then the product price and description will be repeated. This will make our orders table big and unmanageable.
+
+So instead, we can split our data into three tables:
+
+    orders would contain the information necessary to describe an order: order_id, customer_id, product_id, quantity, and timestamp
+    products would contain the information to describe each product: product_id, product_description and product_price
+    customers would contain the information for each customer: customer_id, customer_name, customer_address, and customer_phone_number
+
+In this lesson, we will learn the Pandas commands that help us work with data stored in multiple tables.
+
+
+Suppose we have the following three tables that describe our eCommerce business:
+
+    orders — a table with information on each transaction:
+
+order_id	customer_id	product_id	quantity	timestamp
+1	2	3	1	2017-01-01
+2	2	2	3	2017-01-01
+3	3	1	1	2017-01-01
+4	3	2	2	2017-02-01
+5	3	3	3	2017-02-01
+6	1	4	2	2017-03-01
+7	1	1	1	2017-02-02
+8	1	4	1	2017-02-02
+
+    products — a table with product IDs, descriptions, and prices:
+
+product_id	description	price
+1	thing-a-ma-jig	5
+2	whatcha-ma-call-it	10
+3	doo-hickey	7
+4	gizmo	3
+
+    customers — a table with customer names and contact information:
+
+customer_id	customer_name	address	phone_number
+1	John Smith	123 Main St.	212-123-4567
+2	Jane Doe	456 Park Ave.	949-867-5309
+3	Joe Schmo	798 Broadway	112-358-1321
+
+If we just look at the orders table, we can’t really tell what’s happened in each order. However, if we refer to the other tables, we can get a more complete picture.
+
+Let’s examine the order with an order_id of 1. It was purchased by Customer 2. To find out the customer’s name, we look at the customers table and look for the item with a customer_id value of 2. We can see that Customer 2’s name is Jane Doe and that she lives at 456 Park Ave.
+
+Doing this kind of matching is called merging two DataFrames.
+
+
+Inner Merge II
+
+It is easy to do this kind of matching for one row, but hard to do it for multiple rows.
+
+Luckily, Pandas can efficiently do this for the entire table. We use the .merge method.
+
+The .merge method looks for columns that are common between two DataFrames and then looks for rows where those column’s values are the same. It then combines the matching rows into a single row in a new table.
+
+We can call the pd.merge method with two tables like this:
+
+new_df = pd.merge(orders, customers)
+
+This will match up all of the customer information to the orders that each customer made.
+
+In addition to using pd.merge, each DataFrame has its own merge method. For instance, if you wanted to merge orders with customers, you could use:
+
+new_df = orders.merge(customers)
+
+This produces the same DataFrame as if we had called pd.merge(orders, customers).
+
+We generally use this when we are joining more than two DataFrames together because we can “chain” the commands. The following command would merge orders to customers, and then the resulting DataFrame to products:
+
+big_df = orders.merge(customers)\
+    .merge(products)
+
+
+Merge on Specific Columns
+
+In the previous example, the merge function “knew” how to combine tables based on the columns that were the same between two tables. For instance, products and orders both had a column called product_id. This won’t always be true when we want to perform a merge.
+
+Generally, the products and customers DataFrames would not have the columns product_id or customer_id. Instead, they would both be called id and it would be implied that the id was the product_id for the products table and customer_id for the customers table. They would look like this:
+Customers
+id	customer_name	address	phone_number
+1	John Smith	123 Main St.	212-123-4567
+2	Jane Doe	456 Park Ave.	949-867-5309
+3	Joe Schmo	798 Broadway	112-358-1321
+Products
+id	description	price
+1	thing-a-ma-jig	5
+2	whatcha-ma-call-it	10
+3	doo-hickey	7
+4	gizmo	3
+
+**How would this affect our merges?**
+
+Because the id columns would mean something different in each table, our default merges would be wrong.
+
+One way that we could address this problem is to use .rename to rename the columns for our merges. In the example below, we will rename the column id to customer_id, so that orders and customers have a common column for the merge.
+
+pd.merge(
+    orders,
+    customers.rename(columns={'id': 'customer_id'}))
+
+Merge on Specific Columns II
+
+In the previous exercise, we learned how to use rename to merge two DataFrames whose columns don’t match.
+
+If we don’t want to do that, we have another option. We could use the keywords left_on and right_on to specify which columns we want to perform the merge on. In the example below, the “left” table is the one that comes first (orders), and the “right” table is the one that comes second (customers). This syntax says that we should match the customer_id from orders to the id in customers.
+
+pd.merge(
+    orders,
+    customers,
+    left_on='customer_id',
+    right_on='id')
+
+If we use this syntax, we’ll end up with two columns called id, one from the first table and one from the second. Pandas won’t let you have two columns with the same name, so it will change them to id_x and id_y.
+
+It will look like this:
+id_x 	customer_id 	product_id 	quantity 	timestamp 	id_y 	customer_name 	address 	phone_number
+1 	2 	3 	1 	2017-01-01 00:00:00 	2 	Jane Doe 	456 Park Ave 	949-867-5309
+2 	2 	2 	3 	2017-01-01 00:00:00 	2 	Jane Doe 	456 Park Ave 	949-867-5309
+3 	3 	1 	1 	2017-01-01 00:00:00 	3 	Joe Schmo 	789 Broadway 	112-358-1321
+4 	3 	2 	2 	2016-02-01 00:00:00 	3 	Joe Schmo 	789 Broadway 	112-358-1321
+5 	3 	3 	3 	2017-02-01 00:00:00 	3 	Joe Schmo 	789 Broadway 	112-358-1321
+6 	1 	4 	2 	2017-03-01 00:00:00 	1 	John Smith 	123 Main St. 	212-123-4567
+7 	1 	1 	1 	2017-02-02 00:00:00 	1 	John Smith 	123 Main St. 	212-123-4567
+8 	1 	4 	1 	2017-02-02 00:00:00 	1 	John Smith 	123 Main St. 	212-123-4567
+
+The new column names id_x and id_y aren’t very helpful for us when we read the table. We can help make them more useful by using the keyword suffixes. We can provide a list of suffixes to use instead of “_x” and “_y”.
+
+For example, we could use the following code to make the suffixes reflect the table names:
+
+pd.merge(
+    orders,
+    customers,
+    left_on='customer_id',
+    right_on='id',
+    suffixes=['_order', '_customer']
+)
+
+The resulting table would look like this:
+id_order 	customer_id 	product_id 	quantity 	timestamp 	id_customer 	customer_name 	address 	phone_number
+1 	2 	3 	1 	2017-01-01 00:00:00 	2 	Jane Doe 	456 Park Ave 	949-867-5309
+2 	2 	2 	3 	2017-01-01 00:00:00 	2 	Jane Doe 	456 Park Ave 	949-867-5309
+3 	3 	1 	1 	2017-01-01 00:00:00 	3 	Joe Schmo 	789 Broadway 	112-358-1321
+4 	3 	2 	2 	2016-02-01 00:00:00 	3 	Joe Schmo 	789 Broadway 	112-358-1321
+5 	3 	3 	3 	2017-02-01 00:00:00 	3 	Joe Schmo 	789 Broadway 	112-358-1321
+6 	1 	4 	2 	2017-03-01 00:00:00 	1 	John Smith 	123 Main St. 	212-123-4567
+7 	1 	1 	1 	2017-02-02 00:00:00 	1 	John Smith 	123 Main St. 	212-123-4567
+8 	1 	4 	1 	2017-02-02 00:00:00 	1 	John Smith 	123 Main St. 	212-123-4567
+							
+Mismatched Merges
+
+In our previous examples, there were always matching values when we were performing our merges. What happens when that isn’t true?
+
+Let’s imagine that our products table is out of date and is missing the newest product: Product 5. What happens when someone orders it?
+
+Outer Merge
+
+In the previous exercise, we saw that when we merge two DataFrames whose rows don’t match perfectly, we lose the unmatched rows.
+
+This type of merge (where we only include matching rows) is called an inner merge. There are other types of merges that we can use when we want to keep information from the unmatched rows.
+
+Suppose that two companies, Company A and Company B have just merged. They each have a list of customers, but they keep slightly different data. Company A has each customer’s name and email. Company B has each customer’s name and phone number. They have some customers in common, but some are different.
+
+company_a
+name 	email
+Sally Sparrow 	sally.sparrow@gmail.com
+Peter Grant 	pgrant@yahoo.com
+Leslie May 	leslie_may@gmail.com
+
+company_b
+name 	phone
+Peter Grant 	212-345-6789
+Leslie May 	626-987-6543
+Aaron Burr 	303-456-7891
+
+If we wanted to combine the data from both companies without losing the customers who are missing from one of the tables, we could use an Outer Join. An Outer Join would include all rows from both tables, even if they don’t match. Any missing values are filled in with None or nan (which stands for “Not a Number”).
+
+pd.merge(company_a, company_b, how='outer')
+
+The resulting table would look like this:
+name 	email 	phone
+Sally Sparrow 	sally.sparrow@gmail.com 	nan
+Peter Grant 	pgrant@yahoo.com 	212-345-6789
+Leslie May 	leslie_may@gmail.com 	626-987-6543
+Aaron Burr 	nan 	303-456-7891
+
+
+Left and Right Merge
+
+Let’s return to the merge of Company A and Company B.
+Left Merge
+
+Suppose we want to identify which customers are missing phone information. We would want a list of all customers who have email, but don’t have phone.
+
+We could get this by performing a Left Merge. A Left Merge includes all rows from the first (left) table, but only rows from the second (right) table that match the first table.
+
+For this command, the order of the arguments matters. If the first DataFrame is company_a and we do a left join, we’ll only end up with rows that appear in company_a.
+
+By listing company_a first, we get all customers from Company A, and only customers from Company B who are also customers of Company A.
+
+pd.merge(company_a, company_b, how='left')
+
+The result would look like this:
+name 	email 	phone
+Sally Sparrow 	sally.sparrow@gmail.com 	None
+Peter Grant 	pgrant@yahoo.com 	212-345-6789
+Leslie May 	leslie_may@gmail.com 	626-987-6543
+
+Now let’s say we want a list of all customers who have phone but no email. We can do this by performing a Right Merge.
+Right Merge
+
+Right merge is the exact opposite of left merge. Here, the merged table will include all rows from the second (right) table, but only rows from the first (left) table that match the second table.
+
+By listing company_a first and company_b second, we get all customers from Company B, and only customers from Company A who are also customers of Company B.
+
+pd.merge(company_a, company_b, how="right")
+
+The result would look like this:
+name 	email 	phone
+Peter Grant 	pgrant@yahoo.com 	212-345-6789
+Leslie May 	leslie_may@gmail.com 	626-987-6543
+Aaron Burr 	None 	303-456-7891
+
+
+Concatenate DataFrames
+
+Sometimes, a dataset is broken into multiple tables. For instance, data is often split into multiple CSV files so that each download is smaller.
+
+When we need to reconstruct a single DataFrame from multiple smaller DataFrames, we can use the method pd.concat([df1, df2, df2, ...]). This method only works if all of the columns are the same in all of the DataFrames.
+
+For instance, suppose that we have two DataFrames:
+df1
+name	email
+Katja Obinger	k.obinger@gmail.com
+Alison Hendrix	alisonH@yahoo.com
+Cosima Niehaus	cosi.niehaus@gmail.com
+Rachel Duncan	rachelduncan@hotmail.com
+df2
+name	email
+Jean Gray	jgray@netscape.net
+Scott Summers	ssummers@gmail.com
+Kitty Pryde	kitkat@gmail.com
+Charles Xavier	cxavier@hotmail.com
+
+If we want to combine these two DataFrames, we can use the following command:
+
+pd.concat([df1, df2])
+
+That would result in the following DataFrame:
+name	email
+Katja Obinger	k.obinger@gmail.com
+Alison Hendrix	alisonH@yahoo.com
+Cosima Niehaus	cosi.niehaus@gmail.com
+Rachel Duncan	rachelduncan@hotmail.com
+Jean Gray	jgray@netscape.net
+
+Review
+
+This lesson introduced some methods for combining multiple DataFrames:
+
+    Creating a DataFrame made by matching the common columns of two DataFrames is called a merge
+    We can specify which columns should be matches by using the keyword arguments left_on and right_on
+    We can combine DataFrames whose rows don’t all match using left, right, and outer merges and the how keyword argument
+    We can stack or concatenate DataFrames with the same columns using pd.concat
+
+
 
 
 \end{document}
